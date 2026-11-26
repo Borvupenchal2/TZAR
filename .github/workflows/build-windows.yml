@@ -1,0 +1,30 @@
+name: Build TZAR (Windows x64 VST3)
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure (MSVC, x64, JUCE fetched automatically)
+        run: cmake -S . -B build -A x64
+
+      - name: Build Release
+        run: cmake --build build --config Release --target TZAR_VST3 TZAR_Standalone --parallel
+
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item -Recurse "build/TZAR_artefacts/Release/VST3/TZAR.vst3" "dist/TZAR.vst3"
+          Copy-Item "build/TZAR_artefacts/Release/Standalone/TZAR.exe" "dist/TZAR_Standalone.exe"
+          Copy-Item "README.md" "dist/README.md"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TZAR-Windows-x64
+          path: dist

@@ -1,0 +1,7 @@
+build/
+*.wav
+tools/render_demo
+tools/fuzz
+tools/bench
+tools/*.png
+tools/phases.txt
